@@ -1,0 +1,18 @@
+.chat-container {
+    height: 15em;
+    border: solid darkblue;
+    overflow-y: scroll;
+    background: lightblue;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    background: lightsalmon
+}
+
+.container {
+    margin-left: 2.5%;
+    margin-right: 2.5%
+}

@@ -1,0 +1,15 @@
+{
+  "short_name": "Chat",
+  "name": "Real time chat application",
+  "icons": [
+    {
+      "src": "wine.png",
+      "sizes": "150x150",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
