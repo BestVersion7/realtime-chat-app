@@ -15,8 +15,8 @@ const Home = () => {
             <h3>Technologies Used</h3>
             <p>
                 Link to repo: <span> </span>
-                <a href="https://github.com/BestVersion7/heroku-site">
-                    https://github.com/BestVersion7/heroku-site
+                <a href="https://github.com/BestVersion7/realtime-chat-app">
+                    https://github.com/BestVersion7/realtime-chat-app
                 </a>
             </p>
             <section>
