@@ -16,3 +16,20 @@ body {
     margin-left: 2.5%;
     margin-right: 2.5%
 }
+
+/* for Google Maps */
+.mapElement {
+    height: 100%
+}
+.loadingElement {
+    height: 100%
+}
+.containerElement {
+    height: 100vh
+}
+
+@media (min-width: 30em) {
+    .containerElement {
+        height: 25em
+    }
+}

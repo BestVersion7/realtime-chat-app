@@ -22,7 +22,7 @@ const Home = () => {
             <section>
                 <h3>Technologies Used: Front-End</h3>
                 <List>
-                    {['Socket.io', 'Reactjs', 'CSS', 'HTML', 'Material UI'].map((item, index) => (
+                    {['Socket.io', 'Reactjs', 'React-Google-Maps', 'CSS', 'HTML'].map((item, index) => (
                         <ListItem key={index}>
                             <ListItemIcon><Check /></ListItemIcon>
                             <ListItemText primary={item} />
@@ -60,7 +60,7 @@ const Chat = () => {
         // http requests
         socket.emit('getData')
         socket.on('loadData', data => {
-            console.log(data)
+            // console.log(data)
             setMessages(data)
         })
 
@@ -70,12 +70,12 @@ const Chat = () => {
 
         // this counts the number of users
         socket.on('countUser', data => {
-            console.log(data)
+            // console.log(data)
             setUserCount(data)
         })
 
         socket.on('typingMessage', data => {
-            console.log(data)
+            // console.log(data)
             setTypingMessage(data)
             setTimeout(() => ContainerRef.current.scrollTop = ContainerRef.current.scrollHeight, 330)
         })
