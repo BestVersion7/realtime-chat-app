@@ -14,7 +14,7 @@ const Chat = ({ match }) => {
     const [name, setName] = useState("Anon");
     const [message, setMessage] = useState("hello there");
     const [userCount, setUserCount] = useState(null);
-    // const [typingMessage, setTypingMessage] = useState("");
+    const [typingMessage, setTypingMessage] = useState("");
 
     useEffect(() => {
         // joining rooms
@@ -36,9 +36,16 @@ const Chat = ({ match }) => {
             }
         });
 
+        // posting data
         socket.on("postSuccess", () => {
             socket.emit("getComments", match.params.id);
         });
+
+        socket.on('typingMessage', data => {
+            console.log(data)
+            setTypingMessage(data)
+            document.getElementById('typingMessage').scrollIntoView()
+        })
 
         return () => {
             // leave the room
@@ -58,12 +65,12 @@ const Chat = ({ match }) => {
             room: match.params.id
         });
         setMessage("");
-        // socket.emit("userTyping");
+        socket.emit('userStopTyping', match.params.id)
     };
 
-    // const handleTyping = () => {
-    //     socket.emit("userTyping", `${name} is typing...`);
-    // };
+    const handleTyping = () => {
+        socket.emit("userTyping", match.params.id)
+    };
 
     return (
         <main className="container">
@@ -81,12 +88,12 @@ const Chat = ({ match }) => {
                         {message}
                     </div>
                 ))}
-                {/* <i>{typingMessage}</i> */}
+                <i id="typingMessage">{typingMessage}</i>
             </article>
 
             <form onSubmit={handleSubmit}>
                 <input
-                    // onKeyDown={handleTyping}
+                    onKeyDown={handleTyping}
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                 />

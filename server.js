@@ -41,17 +41,24 @@ let users = {
     game3: 0
 };
 
+// working in progress mapping users
+let id = {
+    game1: [],
+    game2: [],
+    game3: []
+};
+
 function socketController (socket) {
     socket.on('userJoin', room => {
         socket.join(room)
         users[room]++
-        io.to(room).emit('countUser', users[room])
+        io.to(room).emit('countUser', `${users[room]} users are currently online`)
     })
 
     socket.on('userLeave', room => {
         socket.leave(socket.room)
         users[room]--
-        socket.broadcast.to(room).emit('countUser', users[room])
+        socket.broadcast.to(room).emit('countUser', `${users[room]} users are currently online`)
     })
 
     socket.on('getComments', async room => {
@@ -82,7 +89,11 @@ function socketController (socket) {
         }
     })
 
-    // socket.on('userTyping', data => {
-    //     socket.broadcast.emit('typingMessage', data)
-    // })
+    socket.on('userTyping', room => {
+        socket.broadcast.to(room).emit('typingMessage', `${socket.id} is typing`)
+    })
+
+    socket.on('userStopTyping', room => {
+        io.to(room).emit('typingMessage')    
+    })
 }

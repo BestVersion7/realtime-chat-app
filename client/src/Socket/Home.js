@@ -6,16 +6,17 @@ const Home = () => {
             <div>
                 <i>
                     Last update 05 June 2019
-                    <a href="https://github.com/BestVersion7/realtime-chat-app">
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://github.com/BestVersion7/realtime-chat-app"
+                    >
                         https://github.com/BestVersion7/realtime-chat-app
                     </a>
                 </i>
             </div>
-            <h3>
-                Real-time Chat!
-                <br />
-                Click on one of the rooms to begin
-            </h3>
+            <h3>Real-time Chat!</h3>
+            <h4>Click on one of the rooms to begin</h4>
             <section className="home-container">
                 {["game1", "game2", "game3"].map(item => (
                     <a
@@ -23,7 +24,7 @@ const Home = () => {
                         className="link-container"
                         href={`/room/${item}`}
                     >
-                        {item}
+                        <h1>{item}</h1>
                     </a>
                 ))}
             </section>
