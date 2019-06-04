@@ -1,131 +1,106 @@
-import React, { useState, useEffect, useRef } from 'react'
-import io from 'socket.io-client'
-import { Button, List, ListItem, ListItemText, ListItemIcon } from '@material-ui/core'
-import { convertDate } from '../Utilities/convertDate'
-import Check from '@material-ui/icons/Check'
+import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
+import { Button } from "@material-ui/core";
+import { convertDate } from "../Utilities/convertDate";
+import {Link} from 'react-router-dom'
 
-let socket = io.connect('http://localhost:4000')
-if (process.env.NODE_ENV === 'production') {
-    socket = io.connect({ transportOptions: ['websocket'] })
+let socket = io("http://localhost:4000");
+if (process.env.NODE_ENV === "production") {
+    socket = io({ transportOptions: ["websocket"] });
 }
 
-const Home = () => {
-    return (
-        <div>
-            <h3>Technologies Used</h3>
-            <p>
-                Link to repo: <span> </span>
-                <a href="https://github.com/BestVersion7/realtime-chat-app">
-                    https://github.com/BestVersion7/realtime-chat-app
-                </a>
-            </p>
-            <section>
-                <h3>Technologies Used: Front-End</h3>
-                <List>
-                    {['Socket.io', 'Reactjs', 'React-Google-Maps', 'CSS', 'HTML'].map((item, index) => (
-                        <ListItem key={index}>
-                            <ListItemIcon><Check /></ListItemIcon>
-                            <ListItemText primary={item} />
-                        </ListItem>
-                    ))}
-                </List>
-            </section>
-            <section>
-                <h3>Technologies Used: Back-end (Real-time)</h3>
-                <List>
-                    {['Socket.io', 'ExpressJs', 'Nodejs', 'MongoDB Atlas'].map((item, index) => (
-                        <ListItem key={index}>
-                            <ListItemIcon><Check /></ListItemIcon>
-                            <ListItemText primary={item} />
-                        </ListItem>
-                    ))}
-                </List>
-            </section>
-        </div>
-    )
-}
-
-const Chat = () => {
-    const ContainerRef = useRef()
-    const [messages, setMessages] = useState([])
-
-    const [name, setName] = useState('Anon')
-    const [message, setMessage] = useState('')
-
-    const [userCount, setUserCount] = useState(null)
-
-    const [typingMessage, setTypingMessage] = useState('')
+const Chat = ({ match }) => {
+    const [messages, setMessages] = useState([]);
+    const [name, setName] = useState("Anon");
+    const [message, setMessage] = useState("hello there");
+    const [userCount, setUserCount] = useState(null);
+    // const [typingMessage, setTypingMessage] = useState("");
 
     useEffect(() => {
-        // http requests
-        socket.emit('getData')
-        socket.on('loadData', data => {
-            // console.log(data)
-            setMessages(data)
-        })
+        // joining rooms
+        socket.emit("userJoin", match.params.id);
+        socket.on("countUser", data => {
+            // console.log(data);
+            setUserCount(data);
+        });
 
-        socket.on('postSuccess', () => {
-            socket.emit('getData')
-        })
+        // fetching data
+        socket.emit("getComments", match.params.id);
+        socket.on("loadComments", data => {  
+            setMessages(data);
+            // scroll to bottom on initial render
+            if(data.length>0) {
+                document
+                .getElementById("chat-container")
+                .lastElementChild.scrollIntoView();
+            }
+        });
 
-        // this counts the number of users
-        socket.on('countUser', data => {
-            // console.log(data)
-            setUserCount(data)
-        })
+        socket.on("postSuccess", () => {
+            socket.emit("getComments", match.params.id);
+        });
 
-        socket.on('typingMessage', data => {
-            // console.log(data)
-            setTypingMessage(data)
-            setTimeout(() => ContainerRef.current.scrollTop = ContainerRef.current.scrollHeight, 330)
-        })
-
-        // 
-    }, [])
+        return () => {
+            // leave the room
+            socket.emit("userLeave", match.params.id);
+            socket.disconnect();
+        };
+    }, [match.params.id]);
 
     const handleSubmit = e => {
-        e.preventDefault()
-        if (!message) {
-            return
+        e.preventDefault();
+        if(!message) {
+            alert('no message typed')
         }
-        socket.emit('postData', {
-            name, message
-        })
-        setMessage('')
-        socket.emit('userTyping')
-        // move to bottom of screen after finish typing
-        setTimeout(() => ContainerRef.current.scrollTop = ContainerRef.current.scrollHeight, 330)
-    }
+        socket.emit("postComment", {
+            name,
+            message,
+            room: match.params.id
+        });
+        setMessage("");
+        // socket.emit("userTyping");
+    };
 
-    const handleTyping = () => {
-        socket.emit('userTyping', `${name} is typing...`)
-        setTimeout(() => ContainerRef.current.scrollTop = ContainerRef.current.scrollHeight, 330)
-    }
+    // const handleTyping = () => {
+    //     socket.emit("userTyping", `${name} is typing...`);
+    // };
 
     return (
         <main className="container">
-            <h3>Real-time Chat!</h3>
-            <p>You are <input value={name} onChange={e => setName(e.target.value)} /> </p>
-
+            <Link to="/">Back to Rooms</Link>
+            <p>You are in {match.params.id}</p>
+            <p>
+                You are{" "}
+                <input value={name} onChange={e => setName(e.target.value)} />{" "}
+            </p>
             <section>{userCount}</section>
-
-            <article ref={ContainerRef} className="chat-container">
+            <article id="chat-container" className="chat-container">
                 {messages.map(({ _id, name, date, message }) => (
                     <div key={_id}>
-                        {`${convertDate(date)}`} <strong>{name}</strong>: {message}
+                        {`${convertDate(date)}`} <strong>{name}</strong>:{" "}
+                        {message}
                     </div>
                 ))}
-                <i>{typingMessage}</i>
+                {/* <i>{typingMessage}</i> */}
             </article>
 
             <form onSubmit={handleSubmit}>
-                <input onKeyDown={handleTyping} value={message} onChange={e => setMessage(e.target.value)} />
-                <Button size="small" type="submit" color="primary" variant="contained">Send Message</Button>
+                <input
+                    // onKeyDown={handleTyping}
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                />
+                <Button
+                    size="small"
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                >
+                    Send Message
+                </Button>
             </form>
-
-            <Home />
         </main>
-    )
-}
+    );
+};
 
-export default Chat
+export default Chat;

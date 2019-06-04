@@ -1,3 +1,9 @@
+body {
+    /* margin: 0;
+    padding: 0; */
+    background: lightsalmon;
+}
+
 .chat-container {
     height: 15em;
     border: solid darkblue;
@@ -5,31 +11,36 @@
     background: lightblue;
 }
 
-
-body {
-    margin: 0;
-    padding: 0;
-    background: lightsalmon
-}
-
 .container {
     margin-left: 2.5%;
-    margin-right: 2.5%
+    margin-right: 2.5%;
+}
+
+.home-container {
+    display: grid;
+    grid-template: auto/ repeat(3, 1fr);
+    grid-gap: 1em;
+}
+
+.link-container {
+    border: solid blue;
+    height: 8em;
+    text-align: center;
 }
 
 /* for Google Maps */
 .mapElement {
-    height: 100%
+    height: 100%;
 }
 .loadingElement {
-    height: 100%
+    height: 100%;
 }
 .containerElement {
-    height: 100vh
+    height: 100vh;
 }
 
 @media (min-width: 30em) {
     .containerElement {
-        height: 25em
+        height: 25em;
     }
 }

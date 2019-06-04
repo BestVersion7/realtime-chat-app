@@ -11,7 +11,12 @@ const chatCommentSchema = new Schema({
         default: 'Kate'
     },
     message: {
-        type: String
+        type: String,
+        required: true
+    },
+    room: {
+        type: String,
+        maxlength: 15
     }
 })
 
